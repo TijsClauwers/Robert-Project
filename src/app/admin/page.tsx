@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
+import AdminNav from '@/components/AdminNav';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -15,14 +16,17 @@ export default async function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Admin</h1>
-          <p className="text-sm text-muted-foreground">Admin CRUD + auth coming next.</p>
+      <div className="space-y-3">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight">Overview</h2>
+            <p className="text-sm text-muted-foreground">Quick health view. Auth comes next.</p>
+          </div>
+          <Button variant="secondary" asChild>
+            <Link href="/book">Preview booking</Link>
+          </Button>
         </div>
-        <Button variant="secondary" asChild>
-          <Link href="/book">Preview booking</Link>
-        </Button>
+        <AdminNav current="/admin" />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -61,7 +65,7 @@ export default async function AdminPage() {
       </div>
 
       <div className="rounded-lg border bg-muted/20 p-4 text-sm text-muted-foreground">
-        Next: Services CRUD, Staff CRUD, Availability editor, Bookings list.
+        Go to Services/Staff/Availability/Bookings to manage the app.
       </div>
     </div>
   );
