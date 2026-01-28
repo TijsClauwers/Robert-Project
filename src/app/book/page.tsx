@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db';
 import Link from 'next/link';
+import BookClient from './BookClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,31 +10,12 @@ export default async function BookPage() {
 
   return (
     <main style={{ padding: 24, fontFamily: 'system-ui, Arial' }}>
-      <h1>Book</h1>
-      <p>Select a service + staff (MVP). Slot picking will come next.</p>
+      <h1>Book an appointment</h1>
+      <p>MVP: pick service, staff, date → select slot → confirm booking.</p>
 
-      <h2>Services</h2>
-      <ul>
-        {services.map((s) => (
-          <li key={s.id}>
-            <strong>{s.name}</strong> — {s.durationMin} min — {(s.priceCents / 100).toFixed(2)} {s.currency}
-            {s.depositCents ? ` (deposit ${(s.depositCents / 100).toFixed(2)} ${s.currency})` : ''}
-          </li>
-        ))}
-      </ul>
-
-      <h2>Staff</h2>
-      <ul>
-        {staff.map((u) => (
-          <li key={u.id}>{u.name ?? u.email} ({u.email})</li>
-        ))}
-      </ul>
+      <BookClient services={services} staff={staff} />
 
       <p style={{ marginTop: 16 }}>
-        Next: calendar UI + availability-based slot generation + checkout.
-      </p>
-
-      <p>
         <Link href="/">← Home</Link>
       </p>
     </main>
