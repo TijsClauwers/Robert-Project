@@ -1,0 +1,136 @@
+// Prisma schema for Booking SaaS (multi-staff + intake + Stripe payments)
+
+generator client {
+  provider   = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  REQUIRES_ACTION
+  PAID
+  REFUNDED
+  FAILED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(STAFF)
+  active    Boolean  @default(true)
+
+  availabilities Availability[]
+  bookings       Booking[] @relation("BookingStaff")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  durationMin Int
+
+  // store money in cents
+  priceCents   Int
+  currency     String @default("EUR")
+  depositCents Int?
+
+  active     Boolean @default(true)
+  bookings   Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id        String @id @default(cuid())
+  email     String?
+  name      String?
+  phone     String?
+
+  bookings  Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id        String @id @default(cuid())
+
+  service   Service @relation(fields: [serviceId], references: [id])
+  serviceId String
+
+  staff     User    @relation("BookingStaff", fields: [staffId], references: [id])
+  staffId   String
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  startAt   DateTime
+  endAt     DateTime
+  status    BookingStatus @default(PENDING)
+
+  // intake captured as JSON
+  intakeJson Json?
+  notes      String?
+
+  payment    Payment?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([startAt])
+  @@index([staffId, startAt])
+}
+
+model Availability {
+  id       String @id @default(cuid())
+  staff    User   @relation(fields: [staffId], references: [id])
+  staffId  String
+
+  // 0=Sunday..6=Saturday
+  dayOfWeek Int
+
+  // minutes since midnight (local business timezone)
+  startMin Int
+  endMin   Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([staffId, dayOfWeek])
+}
+
+model Payment {
+  id           String @id @default(cuid())
+  booking      Booking @relation(fields: [bookingId], references: [id])
+  bookingId    String  @unique
+
+  status       PaymentStatus @default(UNPAID)
+  amountCents  Int
+  currency     String @default("EUR")
+
+  stripeSessionId       String?
+  stripePaymentIntentId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
