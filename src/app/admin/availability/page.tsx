@@ -96,64 +96,59 @@ export default async function AdminAvailabilityPage({
             <CardTitle>Add block</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={upsertAvailability} className="grid gap-4">
-              <div className="space-y-2">
+            <div className="grid gap-4">
+              {/* Switch staff (GET) */}
+              <form action="/admin/availability" method="get" className="grid gap-2">
                 <Label>Staff</Label>
-                <select
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                  name="staffId"
-                  defaultValue={selected}
-                  onChange={() => {
-                    /* clientless */
-                  }}
-                >
-                  {staff.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.name ?? u.email}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-muted-foreground">To switch staff, add ?staffId=... in URL (temporary until auth/#4).</p>
-              </div>
+                <div className="flex gap-2">
+                  <select
+                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                    name="staffId"
+                    defaultValue={selected}
+                  >
+                    {staff.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.name ?? u.email}
+                      </option>
+                    ))}
+                  </select>
+                  <Button type="submit" variant="secondary">
+                    Switch
+                  </Button>
+                </div>
+              </form>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Day of week (0=Sun..6=Sat)</Label>
-                  <Input name="dayOfWeek" type="number" min={0} max={6} defaultValue={1} />
-                </div>
-                <div className="space-y-2">
-                  <Label>From (HH:MM)</Label>
-                  <Input
-                    name="startMin"
-                    type="number"
-                    min={0}
-                    max={1435}
-                    defaultValue={toMin('09:00')}
-                  />
-                </div>
-              </div>
+              {/* Add block (POST server action) */}
+              <form action={upsertAvailability} className="grid gap-4">
+                <input type="hidden" name="staffId" value={selected} />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>To (minutes since midnight)</Label>
-                  <Input
-                    name="endMin"
-                    type="number"
-                    min={1}
-                    max={1440}
-                    defaultValue={toMin('17:00')}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Tip</Label>
-                  <p className="text-xs text-muted-foreground">
-                    For now, we store minutes since midnight. We’ll add a nicer time picker later.
-                  </p>
-                </div>
-              </div>
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <Label>Day</Label>
+                    <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" name="dayOfWeek" defaultValue="1">
+                      {DOW.map((label, idx) => (
+                        <option key={label} value={idx}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-              <Button type="submit">Add block</Button>
-            </form>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>From</Label>
+                      <Input name="startTime" type="time" defaultValue="09:00" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>To</Label>
+                      <Input name="endTime" type="time" defaultValue="17:00" />
+                    </div>
+                  </div>
+                </div>
+
+                <Button type="submit">Add block</Button>
+              </form>
+            </div>
           </CardContent>
         </Card>
       </div>

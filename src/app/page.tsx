@@ -4,23 +4,52 @@ import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
-    <div className="grid gap-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Booking SaaS (MVP)</h1>
-        <p className="text-muted-foreground">
-          Multi-staff bookings + intake + payments (Stripe) — currently focusing on booking flow.
-        </p>
-      </div>
+    <div className="mx-auto grid max-w-5xl gap-10">
+      {/* Hero */}
+      <section className="grid gap-6 rounded-2xl border bg-gradient-to-b from-muted/40 to-background p-8">
+        <div className="grid gap-3">
+          <h1 className="text-4xl font-semibold tracking-tight">Bookings that don’t feel like admin work.</h1>
+          <p className="max-w-2xl text-muted-foreground">
+            A clean multi-staff booking experience with a simple admin panel for services, staff, availability and bookings.
+          </p>
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+        <div className="flex flex-wrap gap-3">
+          <Button asChild>
+            <Link href="/book">Book an appointment</Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link href="/admin">Open admin</Link>
+          </Button>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          Dev preview: auth is temporarily disabled for admin so you can explore.
+        </p>
+      </section>
+
+      {/* Feature cards */}
+      <section className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Customer booking</CardTitle>
-            <CardDescription>Pick service, staff, date → choose a slot → confirm.</CardDescription>
+            <CardTitle>Booking flow</CardTitle>
+            <CardDescription>Service → staff → date → slot → confirm.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild>
-              <Link href="/book">Go to booking</Link>
+              <Link href="/book">Try booking</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Availability</CardTitle>
+            <CardDescription>Weekly blocks per staff member.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="secondary" asChild>
+              <Link href="/admin/availability">Manage availability</Link>
             </Button>
           </CardContent>
         </Card>
@@ -28,19 +57,30 @@ export default function Home() {
         <Card>
           <CardHeader>
             <CardTitle>Admin</CardTitle>
-            <CardDescription>CRUD + availability + staff roles (coming next).</CardDescription>
+            <CardDescription>Manage services, staff and bookings.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="secondary" asChild>
-              <Link href="/admin">Open admin</Link>
+              <Link href="/admin">Admin dashboard</Link>
             </Button>
           </CardContent>
         </Card>
-      </div>
+      </section>
 
-      <div className="rounded-lg border bg-muted/20 p-4 text-sm text-muted-foreground">
-        Note: this is a dev preview. Auth + styling polish + Stripe are still in progress.
-      </div>
+      {/* Footer */}
+      <footer className="border-t py-8 text-sm text-muted-foreground">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <p>Booking SaaS — MVP preview</p>
+          <div className="flex gap-4">
+            <Link className="underline-offset-4 hover:underline" href="/book">
+              Book
+            </Link>
+            <Link className="underline-offset-4 hover:underline" href="/admin">
+              Admin
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
